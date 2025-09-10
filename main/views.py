@@ -2,7 +2,7 @@ from django.shortcuts import render
 
 def home(request):
     context = {
-        "app_name": "Football Shop",
+        "app_name": "Kalcer Shop",
         "student_name": "Freya Zahra",   
         "student_class": "PBP F"        
     }
