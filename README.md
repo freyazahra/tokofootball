@@ -1,4 +1,5 @@
 # tokofootball
+--- JAWABAN TUGAS 2 ---
 1. Alur implemntasi checklist secara step-by-step
 Jawab:
 - Membuat sebuah proyek Django baru.
@@ -36,3 +37,26 @@ Menurut saya, Django dipilih sebagai permulaan dalam pembelajaran pengembangan p
 
 6. Feedback untuk asisten dosen tutorial 1
 Menurut saya, tidak ada feedback khusus yang perlu diberikan untuk asisten dosen pada tutorial 1, karena materi yang disampaikan sudah sangat jelas dan mudah dipahami. Selain itu, para asisten dosen juga menunjukkan kerelaan untuk membantu kami meskipun di luar jam kuliah, sehingga kami merasa sangat terbantu dalam memahami materi dan menyelesaikan tugas.
+
+
+--- JAWAB TUGAS 3 ---
+1. Jelaskan mengapa kita memerlukan data delivery dalam pengimplementasian sebuah platform?
+==> Kita memerlukan data delivery karena platform hanya bisa berjalan baik jika data dapat dikirim dan diterima dengan cepat, aman, dan konsisten. Tanpa data delivery, informasi antar komponen tidak terhubung, integrasi sistem gagal, pengalaman pengguna terganggu, serta analisis dan pengambilan keputusan tidak bisa dilakukan.
+
+2. Menurutmu, mana yang lebih baik antara XML dan JSON? Mengapa JSON lebih populer dibandingkan XML?
+==> JSON lebih populer dibandingkan XML karena strukturnya yang lebih sederhana, ringkas, dan mudah dipahami, sehingga parsing data menjadi lebih cepat dan efisien tanpa banyak tag pembuka-penutup seperti pada XML; selain itu, JSON terintegrasi erat dengan JavaScript dan didukung luas oleh berbagai bahasa pemrograman modern, membuatnya lebih praktis untuk pertukaran data pada web API dan aplikasi berbasis web, sementara XML cenderung digunakan untuk kebutuhan dokumen kompleks atau sistem legacy.
+
+3. Jelaskan fungsi dari method is_valid() pada form Django dan mengapa kita membutuhkan method tersebut?
+==> is_valid() pada form Django berfungsi untuk memeriksa apakah data input sesuai aturan validasi. Kita membutuhkannya agar hanya data yang valid, konsisten, dan aman yang diproses atau disimpan ke database.
+
+4. Mengapa kita membutuhkan csrf_token saat membuat form di Django? Apa yang dapat terjadi jika kita tidak menambahkan csrf_token pada form Django? Bagaimana hal tersebut dapat dimanfaatkan oleh penyerang?
+==> Kita membutuhkan csrf_token pada form Django untuk melindungi aplikasi dari serangan Cross-Site Request Forgery (CSRF), yaitu serangan di mana penyerang memanfaatkan sesi login pengguna untuk mengirim permintaan berbahaya tanpa sepengetahuan mereka. Jika csrf_token tidak ditambahkan, server tidak bisa membedakan apakah permintaan berasal dari form asli aplikasi atau dari situs berbahaya, sehingga penyerang dapat memanfaatkan hal ini untuk melakukan aksi berbahaya seperti mengubah password, mentransfer saldo, atau menghapus data hanya dengan membuat korban membuka link atau halaman palsu. Dengan adanya csrf_token, setiap permintaan POST harus menyertakan token unik yang diverifikasi server, sehingga serangan CSRF dapat dicegah.
+
+5. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial).
+==> dari model → form → views (HTML & XML/JSON) → urls → templates → testing & deployment consideration
+
+6. Apakah ada feedback untuk asdos di tutorial 2 yang sudah kalian kerjakan?
+==> Asdos pada tutorial 2 sangat membantu karena selalu mengarahkan dengan jelas saat ada kesulitan. Penjelasannya runtut, sabar, dan membuat materi lebih mudah dipahami sehingga pengerjaan tugas jadi lebih terarah
+
+Link SS Postman
+https://drive.google.com/drive/folders/1CMvS0Q7wnAiDqXWVxxXhZ7SV8GaeKPAU?usp=sharing

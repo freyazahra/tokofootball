@@ -1,11 +1,39 @@
-<!DOCTYPE html>
-<html>
-<head>
+{% extends "base.html" %}
+
+{% block meta %}
     <title>{{ app_name }}</title>
-</head>
-<body>
+{% endblock meta %}
+
+{% block content %}
+    <!-- Header toko -->
     <h1>Selamat Datang di Aplikasi {{ app_name }}</h1>
-    <p>Nama: {{ student_name }}</p>
+    <p>Owner: {{ student_name }}</p>
     <p>Kelas: {{ student_class }}</p>
-</body>
-</html>
+
+    <hr>
+
+    <!-- Tombol Add Product -->
+    <a href="{% url 'main:create_product' %}">
+      <button>+ Add Product</button>
+    </a>
+
+    <hr>
+
+    <!-- Daftar Produk -->
+    <h2>Daftar Produk</h2>
+    {% if not products %}
+        <p>Belum ada produk tersedia.</p>
+    {% else %}
+        {% for product in products %}
+            <div style="margin-bottom: 20px;">
+                <h3>{{ product.name }}</h3>
+                <p>Rp {{ product.price }}</p>
+                <p>Kategori: {{ product.category }}</p>
+                <a href="{% url 'main:product_detail' product.id %}">
+                    <button>Detail</button>
+                </a>
+            </div>
+            <hr>
+        {% endfor %}
+    {% endif %}
+{% endblock content %}
