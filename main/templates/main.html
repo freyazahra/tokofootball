@@ -10,30 +10,52 @@
     <p>Owner: {{ student_name }}</p>
     <p>Kelas: {{ student_class }}</p>
 
-    <hr>
-
     <!-- Tombol Add Product -->
     <a href="{% url 'main:create_product' %}">
       <button>+ Add Product</button>
     </a>
 
+    <a href="{% url 'main:logout' %}">
+  <button>Logout</button>
+    </a>
+
+<h5>Sesi terakhir login: {{ last_login }}</h5>
+
     <hr>
 
     <!-- Daftar Produk -->
-    <h2>Daftar Produk</h2>
-    {% if not products %}
-        <p>Belum ada produk tersedia.</p>
-    {% else %}
-        {% for product in products %}
-            <div style="margin-bottom: 20px;">
-                <h3>{{ product.name }}</h3>
-                <p>Rp {{ product.price }}</p>
-                <p>Kategori: {{ product.category }}</p>
+ <h2>Daftar Produk</h2>
+
+{% if not products %}
+    <p>Belum ada produk tersedia.</p>
+{% else %}
+    {% for product in products %}
+        <div>
+            <h2>
+                <a href="{% url 'main:product_detail' product.id %}">{{ product.name }}</a>
+            </h2>
+
+            <p>
+                <b>{{ product.category }}</b>
+                {% if product.is_featured %} | <b>Featured</b>{% endif %}
+                {% if product.is_hot %} | <b>Hot</b>{% endif %}
+            </p>
+
+            {% if product.thumbnail %}
+                <img src="{{ product.thumbnail }}" alt="thumbnail" width="150" height="100">
+                <br />
+            {% endif %}
+
+            <p>{{ product.description|truncatewords:25 }}...</p>
+
+            <p>
                 <a href="{% url 'main:product_detail' product.id %}">
                     <button>Detail</button>
                 </a>
-            </div>
-            <hr>
+            </p>
+        </div>
+
+        <hr>
         {% endfor %}
     {% endif %}
 {% endblock content %}
