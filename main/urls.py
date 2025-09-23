@@ -7,7 +7,6 @@ urlpatterns = [
     path('', home, name='show_main'),
     path("add/", create_product, name="create_product"),
     path("detail/<int:id>/", product_detail, name="product_detail"),
-
     path('xml/', show_xml, name='show_xml'),
     path('json/', show_json, name='show_json'),
     path('xml/<int:id>/', show_xml_by_id, name='show_xml_by_id'),
@@ -15,4 +14,5 @@ urlpatterns = [
     path('register/', register, name='register'),
     path('login/', login_user, name='login'),
     path('logout/', logout_user, name='logout'),
+
 ]
