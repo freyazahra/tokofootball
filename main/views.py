@@ -96,13 +96,3 @@ def logout_user(request):
     response = HttpResponseRedirect(reverse('main:login'))
     response.delete_cookie('last_login')
     return response
-
-def show_seller_xml(request):
-    data = Product.objects.all()
-    xml_data = serializers.serialize("xml", data, fields=("seller_name", "seller_email"))
-    return HttpResponse(xml_data, content_type="application/xml")
-
-def show_seller_json(request):
-    data = Product.objects.all()
-    json_data = serializers.serialize("json", data, fields=("seller_name", "seller_email"))
-    return HttpResponse(json_data, content_type="application/json")
