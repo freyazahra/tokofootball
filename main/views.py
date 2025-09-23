@@ -30,7 +30,9 @@ def create_product(request):
     if request.method == "POST":
         form = ProductForm(request.POST)
         if form.is_valid():
-            form.save()
+            product = form.save(commit=False)  # jangan langsung save
+            product.owner = request.user       # isi owner dengan user yang login
+            product.save()                     # baru simpan ke DB
             return redirect("main:show_main")  # balik ke main setelah tambah produk
     else:
         form = ProductForm()
