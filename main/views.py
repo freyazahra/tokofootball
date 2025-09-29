@@ -13,29 +13,34 @@ from django.urls import reverse
 
 @login_required(login_url='/login')
 def home(request):
-    products = Product.objects.all()
+    filter_type = request.GET.get("filter", "all")   # baca query param
+
+    if filter_type == "my":
+        products = Product.objects.filter(owner=request.user)   # produk milik user login
+    else:
+        products = Product.objects.all()   # semua produk
+
     context = {
         "app_name": "Kalcer Shop",
         "student_name": "Freya Zahra",   
         "student_class": "PBP F",  
         "products": products,
-        'last_login': request.COOKIES.get('last_login', 'Never') 
+        "last_login": request.COOKIES.get("last_login", "Never"),
     }
-    return render(request, "main.html", context) 
+    return render(request, "main.html", context)
 
 #render = cara Django “mengirim” variabel itu ke file HTML (main.html).
 #jadi intinya di views ini kita kayak simpan varibel buat bisa di aksem di main.html
 
 def create_product(request):
-    if request.method == "POST":
-        form = ProductForm(request.POST)
-        if form.is_valid():
-            product = form.save(commit=False)  # jangan langsung save
-            product.owner = request.user       # isi owner dengan user yang login
-            product.save()                     # baru simpan ke DB
-            return redirect("main:show_main")  # balik ke main setelah tambah produk
-    else:
-        form = ProductForm()
+    form = ProductForm(request.POST or None)
+    
+    if form.is_valid() and request.method == "POST":
+        product = form.save(commit=False)  
+        product.owner = request.user       # isi owner dengan user yang login
+        product.save()                     # baru simpan ke DB
+        return redirect("main:show_main")  # balik ke main setelah tambah produk
+
     return render(request, "product_form.html", {"form": form})
 
 @login_required(login_url='/login')
