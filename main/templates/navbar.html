@@ -1,0 +1,47 @@
+<nav style="background-color: #ff8c42; 
+            padding: 12px 40px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            font-family: Arial, sans-serif; 
+            position: fixed; /* Ubah dari 'sticky' menjadi 'fixed' */
+            top: 0; 
+            left: 0; 
+            width: 100%; /* Tambahkan lebar penuh */
+            z-index: 1000; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+
+  <!-- Logo -->
+  <div style="font-size: 26px; font-weight: bold; letter-spacing: 1px; color: white;">
+    <i class="fa-solid fa-crown"></i> 
+    <span style="color: white;">Kalcer</span><span style="color: #ffe066;">Shop</span>
+  </div>
+
+  <!-- Search Bar -->
+  <form action="{% url 'main:search_product' %}" method="GET" 
+        style="flex: 1; max-width: 400px; margin: 0 30px;">
+    <input type="text" name="q" placeholder="Search product..." 
+           style="width: 100%; padding: 8px 14px; border: none; border-radius: 20px; font-size: 14px;">
+  </form>
+
+  <!-- Navigation Icons -->
+  <div style="display: flex; align-items: center; gap: 22px;">
+
+    <!-- Home -->
+    <a href="/" title="Home" style="color: white; font-size: 20px; text-decoration: none;">
+      <i class="fa-solid fa-house"></i>
+    </a>
+
+    <!-- Create Product -->
+    <a href="{% url 'main:create_product' %}" title="Add Product" style="color: white; font-size: 20px; text-decoration: none;">
+      <i class="fa-solid fa-plus"></i>
+    </a>
+
+    <!-- Logout -->
+    <a href="{% url 'main:logout' %}" title="Logout"
+        style="color: #fff; background: #e64a19; padding: 6px 14px; border-radius: 20px; text-decoration: none; font-weight: bold; transition: 0.3s;">
+      <i class="fa-solid fa-right-from-bracket"></i>
+    </a>
+
+  </div>
+</nav>

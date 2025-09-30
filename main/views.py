@@ -34,7 +34,7 @@ def home(request):
 
 def create_product(request):
     form = ProductForm(request.POST or None)
-    
+
     if form.is_valid() and request.method == "POST":
         product = form.save(commit=False)  
         product.owner = request.user       # isi owner dengan user yang login
@@ -101,3 +101,28 @@ def logout_user(request):
     response = HttpResponseRedirect(reverse('main:login'))
     response.delete_cookie('last_login')
     return response
+
+def edit_product(request, id):
+    product = get_object_or_404(Product, pk=id)  
+
+    form = ProductForm(request.POST or None, instance=product)
+    if form.is_valid() and request.method == "POST":
+        form.save()
+        return redirect("main:show_main")
+
+    context = {
+        "form": form,
+    }
+    return render(request, "edit_product.html", context)
+
+def delete_product(request, id):
+    product = get_object_or_404(Product, pk=id)
+    product.delete()
+    return HttpResponseRedirect(reverse('main:show_main'))
+
+def search_product(request):
+    query = request.GET.get('q')
+    products = Product.objects.all()
+    if query:
+        products = products.filter(name__icontains=query)
+    return render(request, 'search_results.html', {'products': products, 'query': query})
