@@ -1,57 +1,163 @@
 {% extends 'base.html' %}
 {% load static %}
-
 {% block meta %}
-{% include 'navbar.html' %} 
+{% include 'navbar.html' %}
 <title>{{ app_name }} - Products</title>
 {% endblock meta %}
-
 {% block content %}
-
-<div class="bg-gray-50 w-full pt-16 min-h-screen">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
-    <!-- Header -->
-    <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900 mb-2">Daftar Produk</h1>
-      <p class="text-gray-600">Selamat datang di Toko Football, pilih produk favoritmu</p>
-    </div>
-
-    <!-- Filter Buttons -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 bg-white rounded-lg border border-gray-200 p-4">
-      <div class="flex space-x-3 mb-4 sm:mb-0">
-        <a href="?filter=all" class="{% if request.GET.filter == 'all' or not request.GET.filter %} bg-orange-500 text-white{% else %}bg-white text-gray-700 border border-gray-300{% endif %} px-4 py-2 rounded-md font-medium transition-colors hover:bg-orange-500 hover:text-white">
-          All Products
-        </a>
-        <a href="?filter=my" class="{% if request.GET.filter == 'my' %} bg-orange-500 text-white{% else %}bg-white text-gray-700 border border-gray-300{% endif %} px-4 py-2 rounded-md font-medium transition-colors hover:bg-orange-500 hover:text-white">
-          My Products
-        </a>
-      </div>
-      {% if user.is_authenticated %}
-        <div class="text-sm text-gray-500">Last login: {{ last_login }}</div>
-      {% endif %}
-    </div>
-
-    <!-- Product Grid -->
-    {% if not products %}
-      <div class="bg-white rounded-lg border border-gray-200 p-12 text-center">
-        <div class="w-32 h-32 mx-auto mb-4">
-          <img src="{% static 'images/no-product.png' %}" alt="No products available" class="w-full h-full object-contain">
+<!-- Hero Section -->
+<div class="bg-gradient-to-br from-orange-500 via-orange-600 to-orange-700 w-full pt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="text-center">
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-4 animate-fade-in">
+                 Toko Football Premium
+            </h1>
+            <p class="text-orange-100 text-lg md:text-xl mb-8 max-w-2xl mx-auto">
+                Temukan koleksi terbaik perlengkapan sepak bola untuk meningkatkan performa Anda
+            </p>
+            
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-3 gap-4 max-w-3xl mx-auto mb-8">
+                <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
+                    <div class="text-3xl font-bold text-white">{{ products|length }}</div>
+                    <div class="text-orange-100 text-sm">Products</div>
+                </div>
+                <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
+                    <div class="text-3xl font-bold text-white">⭐</div>
+                    <div class="text-orange-100 text-sm">Top Quality</div>
+                </div>
+                <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/20">
+                    <div class="text-3xl font-bold text-white">🏆</div>
+                    <div class="text-orange-100 text-sm">Best Seller</div>
+                </div>
+            </div>
         </div>
-        <h3 class="text-lg font-medium text-gray-900 mb-2">No products found</h3>
-        <p class="text-gray-500 mb-6">Be the first to add amazing football products.</p>
-        <a href="{% url 'main:create_product' %}" class="inline-flex items-center px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors">
-          Add Product
-        </a>
-      </div>
-    {% else %}
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {% for product in products %}
-          {% include 'card_product.html' with product=product %}
-        {% endfor %}
-      </div>
-    {% endif %}
-
-  </div>
+    </div>
+    <!-- Wave Divider -->
+    <div class="relative">
+        <svg class="w-full h-12 md:h-16" viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 0L60 10C120 20 240 40 360 46.7C480 53 600 47 720 43.3C840 40 960 40 1080 46.7C1200 53 1320 67 1380 73.3L1440 80V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0V0Z" fill="#F9FAFB"/>
+        </svg>
+    </div>
 </div>
+
+<!-- Main Content -->
+<div class="bg-gray-50 w-full min-h-screen -mt-1">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Filter & Action Bar -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                <!-- Left: Filters -->
+                <div class="flex flex-wrap items-center gap-3">
+                    <span class="text-sm font-medium text-gray-700">Filter:</span>
+                    <a href="?filter=all" 
+                       class="{% if request.GET.filter == 'all' or not request.GET.filter %}bg-orange-500 text-white shadow-md{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %} px-5 py-2.5 rounded-lg font-medium transition-all duration-200 transform hover:scale-105">
+                        <span class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                            </svg>
+                            All Products
+                        </span>
+                    </a>
+                    <a href="?filter=my" 
+                       class="{% if request.GET.filter == 'my' %}bg-orange-500 text-white shadow-md{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %} px-5 py-2.5 rounded-lg font-medium transition-all duration-200 transform hover:scale-105">
+                        <span class="flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                            My Products
+                        </span>
+                    </a>
+                </div>
+
+                <!-- Right: Add Product Button & Last Login -->
+                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                    {% if user.is_authenticated %}
+                    <div class="text-sm text-gray-500 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Last login: {{ last_login }}
+                    </div>
+                    {% endif %}
+                    <a href="{% url 'main:create_product' %}" 
+                       class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg font-medium shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Add New Product
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Section Header -->
+        <div class="mb-6">
+            <h2 class="text-2xl font-bold text-gray-900 mb-1">
+                {% if request.GET.filter == 'my' %}
+                    My Product Collection
+                {% else %}
+                    All Available Products
+                {% endif %}
+            </h2>
+            <p class="text-gray-600">Browse through our premium football equipment</p>
+        </div>
+
+        <!-- Product Grid or Empty State -->
+        {% if not products %}
+        <div class="bg-white rounded-2xl border-2 border-dashed border-gray-300 p-12 text-center">
+            <div class="max-w-md mx-auto">
+                <!-- Empty State Icon -->
+                <div class="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-orange-100 to-orange-200 rounded-full flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-3">No Products Yet</h3>
+                <p class="text-gray-500 mb-8">
+                    {% if request.GET.filter == 'my' %}
+                        You haven't added any products yet. Start building your collection!
+                    {% else %}
+                        The product catalog is empty. Be the first to add amazing football products.
+                    {% endif %}
+                </p>
+                <a href="{% url 'main:create_product' %}" 
+                   class="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                    Add Your First Product
+                </a>
+            </div>
+        </div>
+        {% else %}
+        <!-- Product Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {% for product in products %}
+                {% include 'card_product.html' with product=product %}
+            {% endfor %}
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+
+<style>
+@keyframes fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fade-in 0.6s ease-out;
+}
+</style>
+
 {% endblock content %}

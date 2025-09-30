@@ -1,47 +1,149 @@
-<nav style="background-color: #ff8c42; 
-            padding: 12px 40px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            font-family: Arial, sans-serif; 
-            position: fixed; /* Ubah dari 'sticky' menjadi 'fixed' */
-            top: 0; 
-            left: 0; 
-            width: 100%; /* Tambahkan lebar penuh */
-            z-index: 1000; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+<nav class="bg-gradient-to-r from-orange-500 via-orange-600 to-orange-700 shadow-lg fixed top-0 left-0 w-full z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+            <!-- Logo Section -->
+            <div class="flex items-center space-x-3">
+                <div class="bg-white/20 backdrop-blur-sm p-2 rounded-lg">
+                    <i class="fa-solid fa-futbol text-2xl text-white"></i>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-2xl font-bold text-white tracking-tight">
+                        Kalcer<span class="text-yellow-300">Shop</span>
+                    </span>
+                    <span class="text-xs text-orange-100 -mt-1">Football Premium Store</span>
+                </div>
+            </div>
 
-  <!-- Logo -->
-  <div style="font-size: 26px; font-weight: bold; letter-spacing: 1px; color: white;">
-    <i class="fa-solid fa-crown"></i> 
-    <span style="color: white;">Kalcer</span><span style="color: #ffe066;">Shop</span>
-  </div>
+            <!-- Search Bar -->
+            <form action="{% url 'main:search_product' %}" method="GET" 
+                  class="hidden md:flex flex-1 max-w-md mx-8">
+                <div class="relative w-full">
+                    <input type="text" 
+                           name="q" 
+                           placeholder="Search products..." 
+                           class="w-full pl-12 pr-4 py-2.5 rounded-full bg-white/90 backdrop-blur-sm border-2 border-transparent focus:border-white focus:bg-white focus:outline-none transition-all duration-200 text-gray-700 placeholder-gray-500">
+                    <button type="submit" 
+                            class="absolute left-4 top-1/2 transform -translate-y-1/2 text-orange-500 hover:text-orange-600 transition-colors">
+                        <i class="fa-solid fa-magnifying-glass text-lg"></i>
+                    </button>
+                </div>
+            </form>
 
-  <!-- Search Bar -->
-  <form action="{% url 'main:search_product' %}" method="GET" 
-        style="flex: 1; max-width: 400px; margin: 0 30px;">
-    <input type="text" name="q" placeholder="Search product..." 
-           style="width: 100%; padding: 8px 14px; border: none; border-radius: 20px; font-size: 14px;">
-  </form>
+            <!-- Navigation Icons -->
+            <div class="flex items-center space-x-2">
+                <!-- Home -->
+                <a href="{% url 'main:show_main' %}" 
+                   title="Home" 
+                   class="flex items-center justify-center w-10 h-10 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-all duration-200 transform hover:scale-110">
+                    <i class="fa-solid fa-house text-lg"></i>
+                </a>
 
-  <!-- Navigation Icons -->
-  <div style="display: flex; align-items: center; gap: 22px;">
+                <!-- My Products -->
+                <a href="?filter=my" 
+                   title="My Products" 
+                   class="flex items-center justify-center w-10 h-10 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-all duration-200 transform hover:scale-110">
+                    <i class="fa-solid fa-box text-lg"></i>
+                </a>
 
-    <!-- Home -->
-    <a href="/" title="Home" style="color: white; font-size: 20px; text-decoration: none;">
-      <i class="fa-solid fa-house"></i>
-    </a>
+                <!-- User Profile Dropdown -->
+                <div class="relative group">
+                    <button class="flex items-center space-x-2 bg-white/10 hover:bg-white/20 rounded-lg px-3 py-2 transition-all duration-200 transform hover:scale-105">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-300 to-orange-400 flex items-center justify-center text-white font-bold text-sm">
+                            {{ user.username|first|upper }}
+                        </div>
+                        <span class="hidden lg:block text-white font-medium">{{ user.username }}</span>
+                        <i class="fa-solid fa-chevron-down text-white text-xs"></i>
+                    </button>
+                    
+                    <!-- Dropdown Menu -->
+                    <div class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right">
+                        <div class="p-4 border-b border-gray-100">
+                            <p class="text-sm font-semibold text-gray-900">{{ user.username }}</p>
+                            <p class="text-xs text-gray-500">{{ user.email }}</p>
+                        </div>
+                        <div class="py-2">
+                            <a href="{% url 'main:create_product' %}" 
+                               class="flex items-center px-4 py-3 hover:bg-orange-50 transition-colors group/item">
+                                <i class="fa-solid fa-plus text-orange-500 w-5"></i>
+                                <span class="ml-3 text-sm text-gray-700 group-hover/item:text-orange-600">Add Product</span>
+                            </a>
+                            <a href="?filter=my" 
+                               class="flex items-center px-4 py-3 hover:bg-orange-50 transition-colors group/item">
+                                <i class="fa-solid fa-box text-orange-500 w-5"></i>
+                                <span class="ml-3 text-sm text-gray-700 group-hover/item:text-orange-600">My Products</span>
+                            </a>
+                            <a href="#" 
+                               class="flex items-center px-4 py-3 hover:bg-orange-50 transition-colors group/item">
+                                <i class="fa-solid fa-gear text-orange-500 w-5"></i>
+                                <span class="ml-3 text-sm text-gray-700 group-hover/item:text-orange-600">Settings</span>
+                            </a>
+                        </div>
+                        <div class="border-t border-gray-100 py-2">
+                            <a href="{% url 'main:logout' %}" 
+                               class="flex items-center px-4 py-3 hover:bg-red-50 transition-colors group/item">
+                                <i class="fa-solid fa-right-from-bracket text-red-500 w-5"></i>
+                                <span class="ml-3 text-sm text-gray-700 group-hover/item:text-red-600 font-medium">Logout</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <!-- Create Product -->
-    <a href="{% url 'main:create_product' %}" title="Add Product" style="color: white; font-size: 20px; text-decoration: none;">
-      <i class="fa-solid fa-plus"></i>
-    </a>
-
-    <!-- Logout -->
-    <a href="{% url 'main:logout' %}" title="Logout"
-        style="color: #fff; background: #e64a19; padding: 6px 14px; border-radius: 20px; text-decoration: none; font-weight: bold; transition: 0.3s;">
-      <i class="fa-solid fa-right-from-bracket"></i>
-    </a>
-
-  </div>
+        <!-- Mobile Search Bar -->
+        <div class="md:hidden pb-3">
+            <form action="{% url 'main:search_product' %}" method="GET">
+                <div class="relative">
+                    <input type="text" 
+                           name="q" 
+                           placeholder="Search products..." 
+                           class="w-full pl-10 pr-4 py-2 rounded-full bg-white/90 backdrop-blur-sm border-2 border-transparent focus:border-white focus:bg-white focus:outline-none transition-all duration-200 text-gray-700 placeholder-gray-500 text-sm">
+                    <button type="submit" 
+                            class="absolute left-3 top-1/2 transform -translate-y-1/2 text-orange-500">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </nav>
+
+<!-- Spacer to prevent content from going under fixed navbar -->
+<div class="h-16"></div>
+
+<style>
+/* Smooth dropdown animation */
+.group:hover .group-hover\:opacity-100 {
+    animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Custom scrollbar for dropdown if needed */
+.overflow-y-auto::-webkit-scrollbar {
+    width: 6px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+    background: #f97316;
+    border-radius: 10px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+    background: #ea580c;
+}
+</style>

@@ -103,3 +103,32 @@ AuthenticationForm hanya bertugas memvalidasi data. Setelah data valid, Anda tet
 
     4) Membuat Akun Pengguna dan Dummy Data (dilakukan di akhir)
     Langkah ini saya tempatkan di akhir karena bersifat konfigurasi dan bukan implementasi fitur. Setelah semua fungsi utama (otentikasi, relasi, dan tampilan data) berhasil diuji, barulah saya akan membuat data dummy untuk pengujian lebih lanjut.
+
+--- JAWAB TUGAS 4 ---
+1. Urutan prioritas CSS selector
+    1) Inline style (ditulis langsung di atribut elemen) memiliki prioritas paling tinggi.
+    2) ID selector (#id) lebih tinggi daripada class atau tag.
+    3) Class, pseudo-class, attribute selector (.class, :hover, [type="text"]).
+    4) Tag/element selector (div, p, h1).
+    5) Jika spesifisitas sama, maka aturan yang ditulis paling akhir (lebih bawah di file CSS) akan dipakai.Selain itu, penggunaan !important akan mengesampingkan aturan lainnya, meskipun sebaiknya digunakan dengan hati-hati.
+
+2. Pentingnya responsive design
+Responsive design penting karena memastikan tampilan website bisa menyesuaikan berbagai ukuran layar (desktop, tablet, mobile), sehingga pengalaman pengguna konsisten dan nyaman. Contoh aplikasi yang sudah menerapkan responsive design adalah Shopee: layout produk dan tombolnya otomatis menyesuaikan ketika dibuka di HP maupun PC. Sedangkan contoh aplikasi yang belum menerapkan responsive design adalah website lama dengan layout fixed width (misalnya situs sekolah lama yang tampilannya “melebar” di desktop tapi harus zoom in/out di HP), sehingga tidak ramah pengguna.
+
+3. Perbedaan margin, border, padding
+    - Margin adalah jarak luar elemen terhadap elemen lain.
+    - Border adalah garis tepi elemen yang berada di antara margin dan padding.
+    - Padding adalah jarak antara isi elemen (content) dengan tepi dalam border.
+    Contoh implementasi CSS:
+    .card {
+        margin: 20px;     /* jarak antar card */
+        border: 2px solid black;  /* garis tepi */
+        padding: 15px;    /* jarak isi dengan border */
+        }
+
+4. Flexbox dan Grid Layout
+Flexbox digunakan untuk mengatur tata letak dalam satu dimensi (baris atau kolom). Berguna untuk membuat elemen sejajar, rata tengah, atau dibagi fleksibel. Contoh: navbar yang otomatis rapi meskipun jumlah menu berubah.
+Grid Layout digunakan untuk mengatur tata letak dua dimensi (baris dan kolom), cocok untuk layout kompleks seperti dashboard atau galeri produk. Contoh: menampilkan daftar produk dalam bentuk grid dengan jumlah kolom yang menyesuaikan ukuran layar.
+
+5. Implementasi checklist step-by-step (dalam satu paragraf)
+Pertama, saya menyiapkan struktur HTML dasar dari halaman-halaman yang sudah ada (login, register, tambah produk, edit produk, detail produk, dan daftar produk). Setelah itu, saya memilih framework CSS (misalnya Tailwind) untuk mempercepat styling, kemudian mulai mengatur tampilan tiap halaman agar lebih menarik dengan menambahkan warna, ukuran font, dan tata letak yang rapi. Pada halaman daftar produk, saya menambahkan kondisi menggunakan template engine: jika tidak ada produk, tampilkan gambar placeholder dan pesan khusus; jika ada, tampilkan produk dalam bentuk card dengan desain kustom yang berbeda dari tutorial. Setiap card saya lengkapi dengan tombol edit dan hapus yang terhubung ke fungsionalitas backend. Untuk navigasi, saya membuat navbar yang memuat link ke fitur utama aplikasi dan memastikan responsivitas dengan class CSS bawaan framework (misalnya flex, grid, hidden md:block) sehingga tampilan menyesuaikan baik di desktop maupun mobile. Dengan cara ini, setiap fitur pada checklist bisa terpenuhi secara sistematis tanpa hanya mengikuti template bawaan tutorial.
