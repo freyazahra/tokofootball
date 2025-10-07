@@ -14,11 +14,15 @@ from django.urls import reverse
 @login_required(login_url='/login')
 def home(request):
     filter_type = request.GET.get("filter", "all")   # baca query param
+    query = request.GET.get('q')
 
     if filter_type == "my":
         products = Product.objects.filter(owner=request.user)   # produk milik user login
     else:
         products = Product.objects.all()   # semua produk
+
+    if query:
+        products = products.filter(name__icontains=query)
 
     context = {
         "app_name": "Kalcer Shop",
@@ -26,6 +30,7 @@ def home(request):
         "student_class": "PBP F",  
         "products": products,
         "last_login": request.COOKIES.get("last_login", "Never"),
+        "queries": query,
     }
     return render(request, "main.html", context)
 
