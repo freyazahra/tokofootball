@@ -8,18 +8,112 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 import datetime
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
+from django.template.loader import render_to_string
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+
+# ============================================
+# AJAX VIEWS FOR MODALS
+# ============================================
+
+@login_required(login_url='/login')
+def create_product_ajax(request):
+    if request.method == 'GET':
+        # Render the form template
+        html = render_to_string('product_form_modal.html', {
+            'form': ProductForm(),
+            'action_url': '/create-product-ajax/',
+            'is_edit': False
+        }, request=request)
+        return JsonResponse({'html': html}, safe=False)
+    
+    elif request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            product = form.save(commit=False)
+            product.owner = request.user  # Set owner to logged-in user
+            product.save()
+            return JsonResponse({
+                'success': True,
+                'message': 'Product added successfully!',
+                'product_id': product.id
+            })
+        else:
+            return JsonResponse({
+                'success': False,
+                'errors': form.errors,
+                'message': 'Please correct the errors below.'
+            })
+
+@login_required(login_url='/login')
+def edit_product_ajax(request, id):
+    product = get_object_or_404(Product, pk=id)
+    
+    if request.method == 'GET':
+        form = ProductForm(instance=product)
+        html = render_to_string('product_form_modal.html', {
+            'form': form,
+            'action_url': f'/edit-product-ajax/{id}/',
+            'is_edit': True,
+            'product': product
+        }, request=request)
+        return JsonResponse({'html': html}, safe=False)
+    
+    elif request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES, instance=product)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({
+                'success': True,
+                'message': 'Product updated successfully!',
+                'product_id': product.id
+            })
+        else:
+            return JsonResponse({
+                'success': False,
+                'errors': form.errors,
+                'message': 'Please correct the errors below.'
+            })
+
+@login_required(login_url='/login')
+def product_detail_ajax(request, id):
+    product = get_object_or_404(Product, pk=id)
+    html = render_to_string('product_detail_modal.html', {
+        'product': product
+    }, request=request)
+    return JsonResponse({'html': html}, safe=False)
+
+@login_required(login_url='/login')
+@require_POST
+def delete_product_ajax(request, id):
+    try:
+        product = get_object_or_404(Product, pk=id)
+        product.delete()
+        return JsonResponse({
+            'success': True,
+            'message': 'Product deleted successfully!'
+        })
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'message': str(e)
+        }, status=400)
+
+# ============================================
+# EXISTING VIEWS (Keep these)
+# ============================================
 
 @login_required(login_url='/login')
 def home(request):
-    filter_type = request.GET.get("filter", "all")   # baca query param
+    filter_type = request.GET.get("filter", "all")
     query = request.GET.get('q')
 
     if filter_type == "my":
-        products = Product.objects.filter(owner=request.user)   # produk milik user login
+        products = Product.objects.filter(owner=request.user)
     else:
-        products = Product.objects.all()   # semua produk
+        products = Product.objects.all()
 
     if query:
         products = products.filter(name__icontains=query)
@@ -34,17 +128,15 @@ def home(request):
     }
     return render(request, "main.html", context)
 
-#render = cara Django “mengirim” variabel itu ke file HTML (main.html).
-#jadi intinya di views ini kita kayak simpan varibel buat bisa di aksem di main.html
-
+@login_required(login_url='/login')
 def create_product(request):
     form = ProductForm(request.POST or None)
 
     if form.is_valid() and request.method == "POST":
         product = form.save(commit=False)  
-        product.owner = request.user       # isi owner dengan user yang login
-        product.save()                     # baru simpan ke DB
-        return redirect("main:show_main")  # balik ke main setelah tambah produk
+        product.owner = request.user
+        product.save()
+        return redirect("main:show_main")
 
     return render(request, "product_form.html", {"form": form})
 
@@ -87,7 +179,7 @@ def register(request):
 
 def login_user(request):
    if request.method == 'POST':
-      form = AuthenticationForm(data=request.POST) #nuat check sebelumnya ada akun nya
+      form = AuthenticationForm(data=request.POST)
 
       if form.is_valid():
         user = form.get_user()
@@ -107,6 +199,7 @@ def logout_user(request):
     response.delete_cookie('last_login')
     return response
 
+@login_required(login_url='/login')
 def edit_product(request, id):
     product = get_object_or_404(Product, pk=id)  
 
@@ -120,6 +213,7 @@ def edit_product(request, id):
     }
     return render(request, "edit_product.html", context)
 
+@login_required(login_url='/login')
 def delete_product(request, id):
     product = get_object_or_404(Product, pk=id)
     product.delete()

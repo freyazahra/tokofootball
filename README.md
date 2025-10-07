@@ -132,3 +132,43 @@ Grid Layout digunakan untuk mengatur tata letak dua dimensi (baris dan kolom), c
 
 5. Implementasi checklist step-by-step (dalam satu paragraf)
 Pertama, saya menyiapkan struktur HTML dasar dari halaman-halaman yang sudah ada (login, register, tambah produk, edit produk, detail produk, dan daftar produk). Setelah itu, saya memilih framework CSS (misalnya Tailwind) untuk mempercepat styling, kemudian mulai mengatur tampilan tiap halaman agar lebih menarik dengan menambahkan warna, ukuran font, dan tata letak yang rapi. Pada halaman daftar produk, saya menambahkan kondisi menggunakan template engine: jika tidak ada produk, tampilkan gambar placeholder dan pesan khusus; jika ada, tampilkan produk dalam bentuk card dengan desain kustom yang berbeda dari tutorial. Setiap card saya lengkapi dengan tombol edit dan hapus yang terhubung ke fungsionalitas backend. Untuk navigasi, saya membuat navbar yang memuat link ke fitur utama aplikasi dan memastikan responsivitas dengan class CSS bawaan framework (misalnya flex, grid, hidden md:block) sehingga tampilan menyesuaikan baik di desktop maupun mobile. Dengan cara ini, setiap fitur pada checklist bisa terpenuhi secara sistematis tanpa hanya mengikuti template bawaan tutorial.
+
+
+--- JAWABAN TUGAS 6 ---
+
+1. Perbedaan antara Synchronous Request dan Asynchronous Request
+Jawab:
+Synchronous request berarti setiap permintaan yang dikirim ke server harus menunggu respons terlebih dahulu sebelum melanjutkan proses berikutnya. Pola ini menimbulkan blocking behavior, di mana pengguna tidak dapat melakukan interaksi lain hingga proses selesai. Sebaliknya, asynchronous request memungkinkan browser mengirim permintaan ke server di latar belakang tanpa perlu memuat ulang seluruh halaman. Proses lain di sisi klien tetap berjalan, sehingga aplikasi terasa lebih cepat dan responsif.
+
+2. Alur Kerja AJAX di Django (Request–Response Flow)
+Jawab:
+
+    1) User Action – Pengguna melakukan interaksi di browser, misalnya menekan tombol “Load Data”.
+    2) AJAX Request – JavaScript (biasanya melalui fetch() atau XMLHttpRequest) mengirimkan HTTP request ke URL Django tertentu, umumnya ke view yang bersifat AJAX-safe atau diberi dekorator @csrf_exempt.
+    3) View Processing – Django menerima request tersebut, memproses data (misalnya melakukan query ke database), dan mengembalikan respons dalam format JSON.
+    4) Client Update – JavaScript menerima respons dari server dan memperbarui elemen DOM secara dinamis tanpa perlu melakukan reload halaman.
+
+3. Keuntungan Menggunakan AJAX dibandingkan Render Biasa di Django
+Jawab:
+
+    1) Responsif – Tidak perlu memuat ulang seluruh halaman.
+    2) Efisien – Hanya data yang berubah yang dikirim ke server.
+    3) Interaktif – Dapat memuat konten dinamis seperti infinite scroll atau live search.
+    4) Meningkatkan User Experience – Waktu tunggu menjadi lebih singkat dan tampilan terasa lebih halus.
+
+4. Keamanan Saat Menggunakan AJAX untuk Login dan Register di Django
+Jawab:
+
+    1) Gunakan CSRF Token
+    2) Django memiliki mekanisme csrf_token untuk memastikan bahwa setiap request berasal dari sumber yang sah. Pastikan token ini dikirim bersama request AJAX, biasanya melalui header.
+    3) Validasi Input di Server-side
+    Validasi tetap harus dilakukan di sisi server, bukan hanya di JavaScript, agar data tetap aman dari manipulasi.
+    4) Gunakan HTTPS
+    Untuk melindungi data sensitif (terutama password) dari risiko sniffing atau pencurian data.
+
+5. Pengaruh AJAX terhadap User Experience (UX) Website
+Jawab:
+
+    1) Lebih Cepat dan Seamless – Pengguna tidak perlu menunggu halaman memuat ulang sepenuhnya.
+    2) Interaksi Real-Time – Data dapat diperbarui langsung di halaman, contohnya pada fitur live chat atau notifikasi.
+    3) Konsistensi Visual – Transisi antar aksi terasa lebih alami dan tidak mengganggu tampilan utama.
