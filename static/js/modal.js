@@ -1,5 +1,3 @@
-// static/js/modal.js
-
 // Open Modal
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
