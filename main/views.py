@@ -177,6 +177,7 @@ def register(request):
     context = {'form':form}
     return render(request, 'register.html', context)
 
+@csrf_exempt
 def login_user(request):
    if request.method == 'POST':
       form = AuthenticationForm(data=request.POST)
