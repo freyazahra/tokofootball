@@ -13,7 +13,7 @@ urlpatterns = [
     path('login/', views.login_user, name='login'),
     path('logout/', views.logout_user, name='logout'),
     
-    # Product CRUD (Original - you can keep these or remove them)
+    # Product CRUD 
     path('create-product/', views.create_product, name='create_product'),
     path('product/<int:id>/', views.product_detail, name='product_detail'),
     path('edit-product/<int:id>/', views.edit_product, name='edit_product'),
@@ -30,6 +30,13 @@ urlpatterns = [
     path('json/', views.show_json, name='show_json'),
     path('xml/<int:id>/', views.show_xml_by_id, name='show_xml_by_id'),
     path('json/<int:id>/', views.show_json_by_id, name='show_json_by_id'),
+    # API endpoints for Flutter
+    path('api/products/', views.api_products, name='api_products'),
+    path('api/products/<int:id>/', views.api_product_detail, name='api_product_detail'),
+    # Proxy image endpoint for Flutter (avoid CORS on thumbnail images)
+    path('proxy-image/', views.proxy_image, name='proxy_image'),
+    # Flutter create-product endpoint (previously named create_news_flutter)
+    path('api/create-product/', views.create_product_flutter, name='create_product_flutter'),
     
     # Search
     path('search/', views.search_product, name='search_product'),

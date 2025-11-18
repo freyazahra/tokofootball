@@ -1,5 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
+from django.http import JsonResponse
+import requests
 from django.core import serializers
 from main.models import Product
 from main.forms import ProductForm
@@ -13,6 +15,8 @@ from django.urls import reverse
 from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+from django.utils.html import strip_tags
+import json
 
 # ============================================
 # AJAX VIEWS FOR MODALS
@@ -101,10 +105,6 @@ def delete_product_ajax(request, id):
             'message': str(e)
         }, status=400)
 
-# ============================================
-# EXISTING VIEWS (Keep these)
-# ============================================
-
 @login_required(login_url='/login')
 def home(request):
     filter_type = request.GET.get("filter", "all")
@@ -151,19 +151,118 @@ def show_xml(request):
     return HttpResponse(xml_data, content_type="application/xml")
 
 def show_json(request):
-    data = Product.objects.all()
-    json_data = serializers.serialize("json", data)
-    return HttpResponse(json_data, content_type="application/json")
+    """Return a plain JSON array of products for Flutter consumption.
+
+    Each item contains: id, name, price, description, thumbnail, category,
+    is_featured, owner.
+    """
+    products = Product.objects.all()
+    data = []
+    for p in products:
+        data.append({
+            'id': p.id,
+            'name': p.name,
+            'price': p.price,
+            'description': p.description,
+            'thumbnail': p.thumbnail,
+            'category': p.category,
+            'is_featured': p.is_featured,
+            'owner': p.owner.username if p.owner else None,
+        })
+    return JsonResponse(data, safe=False)
 
 def show_xml_by_id(request, id):
     data = Product.objects.filter(pk=id)
     xml_data = serializers.serialize("xml", data)
     return HttpResponse(xml_data, content_type="application/xml")
 
+
 def show_json_by_id(request, id):
-    obj = get_object_or_404(Product, pk=id)
-    json_data = serializers.serialize("json", [obj])
-    return HttpResponse(json_data, content_type="application/json")
+    p = get_object_or_404(Product, pk=id)
+    data = {
+        'id': p.id,
+        'name': p.name,
+        'price': p.price,
+        'description': p.description,
+        'thumbnail': p.thumbnail,
+        'category': p.category,
+        'is_featured': p.is_featured,
+        'owner': p.owner.username if p.owner else None,
+    }
+    return JsonResponse(data)
+
+
+def proxy_image(request):
+    """Fetch an external image and return it through this server to avoid CORS issues.
+
+    Expects query parameter `url` with the image URL.
+    """
+    image_url = request.GET.get('url')
+    if not image_url:
+        return HttpResponse('No URL provided', status=400)
+
+    try:
+        response = requests.get(image_url, timeout=10)
+        response.raise_for_status()
+        content_type = response.headers.get('Content-Type', 'image/jpeg')
+        return HttpResponse(response.content, content_type=content_type)
+    except requests.RequestException as e:
+        return HttpResponse(f'Error fetching image: {str(e)}', status=500)
+
+
+def api_products(request):
+    """Return JSON list of products. Use `?mine=1` to filter to authenticated user's products.
+
+    This endpoint returns a plain array of product objects suitable for Flutter.
+    """
+    """
+    Mengembalikan daftar produk dalam format JSON datar (Flat JSON).
+    Cocok untuk Flutter agar tidak perlu parsing 'fields' dan 'pk' terpisah.
+    """
+    products = Product.objects.all()
+    mine = request.GET.get('mine')
+    
+    # 1. Logic Filter Produk Milik Sendiri
+    if mine == '1' and request.user.is_authenticated:
+        products = products.filter(owner=request.user)
+    
+    # 2. Logic Filter Pencarian (opsional, tapi bagus dipertahankan)
+    q = request.GET.get('q')
+    if q:
+        products = products.filter(name__icontains=q)
+
+    # Jika ingin filter produk milik user sendiri (opsional)
+    # if request.user.is_authenticated:
+    #     products = products.filter(owner=request.user)
+
+    data = []
+    for p in products:
+        data.append({
+            'id': p.id,
+            'name': p.name,
+            'price': p.price,
+            'description': p.description,
+            'thumbnail': p.thumbnail,
+            'category': p.category,
+            'is_featured': p.is_featured,
+            'owner': p.owner.username if p.owner else "Unknown",
+        })
+    return JsonResponse(data, safe=False)
+
+
+def api_product_detail(request, id):
+    p = get_object_or_404(Product, pk=id)
+    data = {
+        'id': p.id,
+        'name': p.name,
+        'price': p.price,
+        'description': p.description,
+        'thumbnail': p.thumbnail,
+        'category': p.category,
+        'is_featured': p.is_featured,
+        'owner': p.owner.username if p.owner else None,
+    }
+    return JsonResponse(data)
 
 def register(request):
     form = UserCreationForm()
@@ -226,3 +325,39 @@ def search_product(request):
     if query:
         products = products.filter(name__icontains=query)
     return render(request, 'search_results.html', {'products': products, 'query': query})
+
+
+@csrf_exempt
+def create_product_flutter(request):
+    """
+    Menerima data JSON dari Flutter dan membuat Product baru.
+    """
+    if request.method == 'POST':
+        if not request.user.is_authenticated:
+            return JsonResponse({'status': 'error', 'message': 'Authentication required.'}, status=401)
+        
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            
+            # Validasi field wajib
+            name = data.get('name')
+            price = data.get('price')
+            if not name or price is None:
+                 return JsonResponse({'status': 'error', 'message': 'Name and Price are required.'}, status=400)
+
+            new_product = Product.objects.create(
+                owner=request.user,
+                name=name,
+                price=int(price),
+                description=data.get('description', ''),
+                category=data.get('category', 'boots'),
+                thumbnail=data.get('thumbnail', ''),
+                is_featured=data.get('is_featured', False),
+            )
+            new_product.save()
+
+            return JsonResponse({'status': 'success', 'message': 'Product created successfully!'}, status=200)
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid method'}, status=405)
